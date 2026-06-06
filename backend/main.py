@@ -390,9 +390,9 @@ async def health():
     return {
         "status": "ok",
         "service": "SahiDawa Guardian",
-        "gemini_configured": bool(GEMINI_API_KEY),
-        "groq_configured": bool(GROQ_API_KEY),
-        "offline_fallback": True,
+        "gemini_configured": bool(GEMINI_API_KEY and "paste" not in GEMINI_API_KEY),
+        "groq_configured": bool(GROQ_API_KEY and "paste" not in GROQ_API_KEY),
+        "version": "1.0"
     }
 
 
