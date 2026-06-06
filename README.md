@@ -3,7 +3,7 @@
 
 > *"My grandmother takes six medicines every day. She cannot read the English name on the strip. She doesn't know what to avoid, what side effects are dangerous, or whether two medicines conflict. She just takes them and hopes. 600 million Indians are exactly like her."*
 
-**SahiDawa Guardian** is not a medicine chatbot. It is a permissioned health agent — built for the Hackhome Inauguration Hackathon, Bengaluru, June 2026.
+**SahiDawa Guardian** is not a medicine chatbot. It is a permissioned health agent — built solo at the Hackhome Inauguration Hackathon, Bengaluru, June 6th 2026.
 
 ---
 
@@ -42,7 +42,7 @@ FastAPI Backend (Python)
 2. LLM reasoning (NVIDIA NIM / Gemini)
 3. Risk scoring (0-100 safety score)
 4. Human approval gate (for high-risk actions)
-5. Audit log entry with SHA hash
+5. Audit log entry with hash chain
 
 ---
 
@@ -59,9 +59,9 @@ FastAPI Backend (Python)
 cd backend
 pip install fastapi uvicorn httpx python-multipart pydantic --only-binary=:all:
 
-# Add your API keys in main.py:
-# GEMINI_API_KEY = "your_key"
-# GROQ_API_KEY = "your_nvidia_or_groq_key"
+# Open main.py and add your keys:
+# GEMINI_API_KEY = "your_key_here"
+# GROQ_API_KEY   = "your_nvidia_key_here"
 
 python main.py
 # Runs on http://localhost:8000
@@ -88,10 +88,10 @@ Open browser → `http://localhost:5173`
 ## 🔌 API Endpoints
 
 ```
-POST /analyze/text     — Analyze medicine by name (NVIDIA NIM)
-POST /analyze/image    — Analyze medicine from photo (Gemini Vision)
-POST /check/interactions — Check drug-drug interactions
-GET  /health           — Health check + model status
+POST /analyze/text        — Analyze medicine by name (NVIDIA NIM)
+POST /analyze/image       — Analyze medicine from photo (Gemini Vision)
+POST /check/interactions  — Check drug-drug interactions
+GET  /health              — Health check + model status
 ```
 
 ---
@@ -103,22 +103,22 @@ GET  /health           — Health check + model status
 3. Switch to **हिन्दी** tab → full Hindi explanation
 4. Switch to **ಕನ್ನಡ** tab → full Kannada explanation
 5. Scroll to **Scoped action gate** → click Approve caregiver alert
-6. Open **Audit Log** → shows full timestamped trail with audit hashes
+6. Open **Audit Log** → full timestamped trail with audit hashes
 7. **Interactions tab** → Warfarin + Aspirin → HIGH RISK card
 8. **Memory tab** → persistent history across sessions
 
 ---
 
-## 🏆 Hackathon Tracks
+## 🏆 Hackathon
 
-Built for **Hackhome Inauguration Hackathon** — June 6, 2026, Bengaluru
+Built for the **Hackhome Inauguration Hackathon**
+📅 June 6, 2026 | 📍 WorkHome Coworking, Koramangala, Bengaluru
+🏅 Submitted to: General Track
 
-Submitted to: **General Track**
-
-Addresses all judging criteria:
+Judging criteria addressed:
 - **Innovation (25%)** — Permission gate + audit trail for health agents
 - **Technical Complexity (25%)** — NVIDIA NIM + Gemini Vision + offline fallback
-- **Impact (25%)** — 600M Indians, medication errors cause 5.8L deaths/year in India
+- **Impact (25%)** — 600M Indians, medication errors a leading cause of patient harm
 - **Presentation (25%)** — Live demo, emotional story, trilingual
 
 ---
@@ -131,7 +131,23 @@ SahiDawa Guardian follows production agent patterns:
 - **Graceful degradation** — offline safety pack activates when cloud APIs fail
 - **Immutable audit log** — every action hash-linked, tamper-evident
 - **Human in the loop** — all high-risk actions require human authorization
-- **Persistent memory** — agent remembers across sessions via localStorage
+- **Persistent memory** — agent remembers across sessions
+
+---
+
+## 🙏 Acknowledgements
+
+Deepest gratitude to the organizers and community who made this hackathon possible:
+
+**Hackhome & WorkHome Coworking** — for hosting an incredible inaugural event and creating a space where builders can ship real things in a single day.
+
+**HSR Founders Club (HSRFC)** — for building one of Bengaluru's most vibrant founder communities and powering this event. The energy in the room today was everything.
+
+**BrowserWire & Gearsec** — for pushing the frontier of what agents can do in real browser environments. The infrastructure problems you're solving are exactly the ones that make production agents possible.
+
+**aigi** — for supporting the builder ecosystem and making events like this happen.
+
+**Judges — Manoj Bajaj, Vedanth, Abhimanyu Dhamija, and Shubham** — for taking the time to evaluate projects built under pressure in a single day. Your collective experience across HFTs, payments infrastructure, data science, and AI is exactly the lens this space needs.
 
 ---
 
@@ -146,4 +162,4 @@ SahiDawa Guardian provides patient education only. It does not diagnose, prescri
 **Varun Namavali** — Data Science Analyst, Bengaluru
 Built solo at Hackhome Inauguration Hackathon in ~5 hours.
 
-*Powered by NVIDIA NIM · Google Gemini · FastAPI · React*
+*Built with FastAPI · React · Vite · Google Gemini API · NVIDIA NIM*
