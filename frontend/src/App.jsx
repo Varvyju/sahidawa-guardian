@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8001";
+// ── Change 8001 → 8000 to match your running backend ──────────────────────
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 const styles = `
-*{box-sizing:border-box}body{margin:0;background:#08090d;color:#f6f4ec;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{min-height:100vh;display:grid;grid-template-columns:340px 1fr;background:radial-gradient(circle at top left,rgba(255,107,0,.16),transparent 32%),#08090d}.sidebar{border-right:1px solid rgba(255,255,255,.08);padding:24px;display:flex;flex-direction:column;gap:20px;background:rgba(12,13,18,.9)}.brand{display:flex;gap:12px;align-items:center}.mark{width:44px;height:44px;border-radius:12px;background:#ff6b00;color:#fff;display:grid;place-items:center;font-weight:900}.brand h1{font-size:24px;line-height:1;margin:0}.brand p{margin:4px 0 0;color:#9a9aaa;font-size:12px}.pitch{padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#12131a}.pitch strong{display:block;margin-bottom:8px}.pitch p{margin:0;color:#c8c4b8;font-size:13px;line-height:1.5}.nav{display:flex;flex-direction:column;gap:8px}.nav button{height:42px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#b8b4aa;font-weight:700;text-align:left;padding:0 14px;cursor:pointer}.nav button.active{background:#ff6b00;color:white;border-color:#ff6b00}.status{margin-top:auto;color:#898897;font-size:12px;line-height:1.6}.main{padding:28px;display:flex;flex-direction:column;gap:18px;max-width:1120px;width:100%}.topline{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.hero h2{font-size:34px;line-height:1.05;margin:0 0 8px}.hero p{margin:0;color:#aaa6a0;max-width:720px;line-height:1.5}.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.panel{border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#12131a;padding:18px}.panel h3{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:#ff9b56}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}.field label{font-size:12px;color:#aaa6a0;font-weight:700}.field input,.field textarea{width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:#0b0c11;color:#f6f4ec;padding:12px;font:inherit;outline:none}.field textarea{min-height:76px;resize:vertical}.field input:focus,.field textarea:focus{border-color:#ff6b00}.actions{display:flex;gap:10px;flex-wrap:wrap}.primary,.secondary,.danger{border:0;border-radius:8px;padding:12px 14px;font-weight:800;cursor:pointer}.primary{background:#ff6b00;color:white}.secondary{background:#242631;color:#f6f4ec;border:1px solid rgba(255,255,255,.08)}.danger{background:#3b1518;color:#ffb3b3;border:1px solid rgba(255,85,85,.25)}.primary:disabled{opacity:.5;cursor:not-allowed}.drop{border:1px dashed rgba(255,107,0,.55);border-radius:8px;background:#0b0c11;padding:24px;text-align:center;cursor:pointer;color:#b8b4aa}.preview{width:100%;max-height:210px;object-fit:contain;border-radius:8px;background:#08090d}.result{display:flex;flex-direction:column;gap:12px}.score{height:8px;border-radius:99px;background:#2b2d36;overflow:hidden}.score span{display:block;height:100%;border-radius:99px}.medicine-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.medicine-title h3{font-size:24px;text-transform:none;letter-spacing:0;color:#fff;margin:0}.badge{border-radius:99px;padding:5px 9px;font-size:11px;font-weight:900;background:#252833;color:#d9d5cb;white-space:nowrap}.badge.high{background:#43191c;color:#ff9b9b}.badge.ok{background:#133421;color:#8cffb0}.list{margin:0;padding-left:18px;color:#d9d5cb;line-height:1.6}.warning{border:1px solid rgba(255,76,76,.3);background:#2b1114;color:#ffb3b3;border-radius:8px;padding:12px;line-height:1.5}.permission{border:2px solid rgba(255,107,0,.45);background:rgba(255,107,0,.08);border-radius:8px;padding:16px}.permission h3{margin:0 0 8px;color:#fff;text-transform:none;letter-spacing:0}.permission p{margin:0 0 12px;color:#d9d5cb}.log{display:flex;flex-direction:column;gap:8px}.log-row{display:grid;grid-template-columns:82px 1fr 84px;gap:10px;align-items:start;border-bottom:1px solid rgba(255,255,255,.07);padding:10px 0}.log-row:last-child{border-bottom:0}.log-time{color:#898897;font-size:12px}.log-action{font-weight:800;font-size:13px}.log-detail{color:#aaa6a0;font-size:12px;margin-top:3px}.hash{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ea7ff;font-size:11px;text-align:right}.trace{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.trace div{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;background:#0b0c11}.trace span{display:block;color:#898897;font-size:11px;text-transform:uppercase;font-weight:900}.trace strong{display:block;margin-top:4px;font-size:13px}.language{display:grid;grid-template-columns:1fr 1fr;gap:10px}.translation{background:#0b0c11;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;line-height:1.6}.empty{color:#898897;text-align:center;padding:30px}.footer-note{font-size:12px;color:#898897;line-height:1.5}.banner{border:1px solid rgba(255,214,10,.25);background:rgba(255,214,10,.08);color:#ffe38a;border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.5}@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:static;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}.nav{flex-direction:row;overflow:auto}.nav button{white-space:nowrap}.grid{grid-template-columns:1fr}.topline{flex-direction:column}.trace,.language{grid-template-columns:1fr}}`;
+*{box-sizing:border-box}body{margin:0;background:#08090d;color:#f6f4ec;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{min-height:100vh;display:grid;grid-template-columns:340px 1fr;background:radial-gradient(circle at top left,rgba(255,107,0,.16),transparent 32%),#08090d}.sidebar{border-right:1px solid rgba(255,255,255,.08);padding:24px;display:flex;flex-direction:column;gap:20px;background:rgba(12,13,18,.9)}.brand{display:flex;gap:12px;align-items:center}.mark{width:44px;height:44px;border-radius:12px;background:#ff6b00;color:#fff;display:grid;place-items:center;font-weight:900}.brand h1{font-size:24px;line-height:1;margin:0}.brand p{margin:4px 0 0;color:#9a9aaa;font-size:12px}.pitch{padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#12131a}.pitch strong{display:block;margin-bottom:8px}.pitch p{margin:0;color:#c8c4b8;font-size:13px;line-height:1.5}.nav{display:flex;flex-direction:column;gap:8px}.nav button{height:42px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#b8b4aa;font-weight:700;text-align:left;padding:0 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}.nav button.active{background:#ff6b00;color:white;border-color:#ff6b00}.status{margin-top:auto;color:#898897;font-size:12px;line-height:1.6}.main{padding:28px;display:flex;flex-direction:column;gap:18px;max-width:1120px;width:100%}.topline{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.hero h2{font-size:34px;line-height:1.05;margin:0 0 8px}.hero p{margin:0;color:#aaa6a0;max-width:720px;line-height:1.5}.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.panel{border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#12131a;padding:18px}.panel h3{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:#ff9b56}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}.field label{font-size:12px;color:#aaa6a0;font-weight:700}.field input,.field textarea{width:100%;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:#0b0c11;color:#f6f4ec;padding:12px;font:inherit;outline:none}.field textarea{min-height:76px;resize:vertical}.field input:focus,.field textarea:focus{border-color:#ff6b00}.actions{display:flex;gap:10px;flex-wrap:wrap}.primary,.secondary,.danger{border:0;border-radius:8px;padding:12px 14px;font-weight:800;cursor:pointer}.primary{background:#ff6b00;color:white}.secondary{background:#242631;color:#f6f4ec;border:1px solid rgba(255,255,255,.08)}.danger{background:#3b1518;color:#ffb3b3;border:1px solid rgba(255,85,85,.25)}.primary:disabled{opacity:.5;cursor:not-allowed}.drop{border:1px dashed rgba(255,107,0,.55);border-radius:8px;background:#0b0c11;padding:24px;text-align:center;cursor:pointer;color:#b8b4aa}.preview{width:100%;max-height:210px;object-fit:contain;border-radius:8px;background:#08090d}.result{display:flex;flex-direction:column;gap:12px}.score{height:8px;border-radius:99px;background:#2b2d36;overflow:hidden}.score span{display:block;height:100%;border-radius:99px}.medicine-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.medicine-title h3{font-size:24px;text-transform:none;letter-spacing:0;color:#fff;margin:0}.badge{border-radius:99px;padding:5px 9px;font-size:11px;font-weight:900;background:#252833;color:#d9d5cb;white-space:nowrap}.badge.high{background:#43191c;color:#ff9b9b}.badge.ok{background:#133421;color:#8cffb0}.list{margin:0;padding-left:18px;color:#d9d5cb;line-height:1.6}.warning{border:1px solid rgba(255,76,76,.3);background:#2b1114;color:#ffb3b3;border-radius:8px;padding:12px;line-height:1.5}.permission{border:2px solid rgba(255,107,0,.45);background:rgba(255,107,0,.08);border-radius:8px;padding:16px}.permission h3{margin:0 0 8px;color:#fff;text-transform:none;letter-spacing:0}.permission p{margin:0 0 12px;color:#d9d5cb}.log{display:flex;flex-direction:column;gap:8px}.log-row{display:grid;grid-template-columns:82px 1fr 84px;gap:10px;align-items:start;border-bottom:1px solid rgba(255,255,255,.07);padding:10px 0}.log-row:last-child{border-bottom:0}.log-time{color:#898897;font-size:12px}.log-action{font-weight:800;font-size:13px}.log-detail{color:#aaa6a0;font-size:12px;margin-top:3px}.hash{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ea7ff;font-size:11px;text-align:right}.trace{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.trace div{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;background:#0b0c11}.trace span{display:block;color:#898897;font-size:11px;text-transform:uppercase;font-weight:900}.trace strong{display:block;margin-top:4px;font-size:13px}.empty{color:#898897;text-align:center;padding:30px}.footer-note{font-size:12px;color:#898897;line-height:1.5}.banner{border:1px solid rgba(255,214,10,.25);background:rgba(255,214,10,.08);color:#ffe38a;border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.5}
+.lang-tabs{display:flex;gap:6px;margin-bottom:12px}.lang-btn{padding:5px 13px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.1);background:transparent;color:#898897;cursor:pointer;font-family:inherit;transition:all .15s}.lang-btn.active{background:#ff6b00;color:white;border-color:#ff6b00}.lang-box{background:#0b0c11;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;line-height:1.7;font-size:14px}.lang-label{font-size:10px;color:#898897;font-weight:900;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}.lang-warn{color:#ff9b9b;margin-top:8px}
+.notif-dot{background:#ff4d4d;color:white;border-radius:99px;padding:2px 7px;font-size:10px;font-weight:900;min-width:18px;text-align:center}
+.approved-gate{border:1px solid rgba(29,185,84,.3);background:rgba(29,185,84,.08);border-radius:8px;padding:12px;color:#8cffb0;font-weight:700;font-size:13px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:static;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}.nav{flex-direction:row;overflow:auto}.nav button{white-space:nowrap}.grid{grid-template-columns:1fr}.topline{flex-direction:column}.trace{grid-template-columns:1fr 1fr}}`;
 
 function now() {
   return new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -28,6 +33,74 @@ function speak(text, lang = "en-IN") {
   window.speechSynthesis.speak(utterance);
 }
 
+// ── NEW: Language Toggle Component ─────────────────────────────────────────
+function LangToggle({ result, addLog }) {
+  const [lang, setLang] = useState("en");
+  const hindi   = result?.translations?.hindi;
+  const kannada = result?.translations?.kannada;
+
+  const langCode = { en: "en-IN", hi: "hi-IN", kn: "kn-IN" };
+  const langLabel = { en: "English", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
+
+  function handleVoice() {
+    const t = lang === "hi" ? hindi : lang === "kn" ? kannada : null;
+    const text = t
+      ? `${result.medicine_name}. ${t.used_for}. ${t.how_to_take}. ${t.warning || ""}`
+      : `${result.medicine_name}. ${result.used_for}. ${result.how_to_take}. ${result.warning || ""}`;
+    speak(text, langCode[lang]);
+    addLog("approve", `Voice readout in ${langLabel[lang]}`, result.medicine_name, result.agent_trace?.audit_hash);
+  }
+
+  return (
+    <div>
+      {/* Language tab buttons */}
+      <div className="lang-tabs">
+        {["en","hi","kn"].map(l => (
+          <button key={l} className={`lang-btn ${lang === l ? "active" : ""}`} onClick={() => setLang(l)}>
+            {langLabel[l]}
+          </button>
+        ))}
+      </div>
+
+      {/* Content for selected language */}
+      {lang === "en" && (
+        <div className="lang-box">
+          <div className="lang-label">Used for</div>
+          <div>{result.used_for}</div>
+          <div className="lang-label" style={{marginTop:10}}>How to take</div>
+          <div>{result.how_to_take}</div>
+          {result.warning && <div className="lang-warn">⚠️ {result.warning}</div>}
+        </div>
+      )}
+      {lang === "hi" && hindi && (
+        <div className="lang-box">
+          <div className="lang-label">उपयोग</div>
+          <div>{hindi.used_for}</div>
+          <div className="lang-label" style={{marginTop:10}}>कैसे लें</div>
+          <div>{hindi.how_to_take}</div>
+          {hindi.warning && <div className="lang-warn">⚠️ {hindi.warning}</div>}
+        </div>
+      )}
+      {lang === "kn" && kannada && (
+        <div className="lang-box">
+          <div className="lang-label">ಉಪಯೋಗ</div>
+          <div>{kannada.used_for}</div>
+          <div className="lang-label" style={{marginTop:10}}>ಹೇಗೆ ತೆಗೆದುಕೊಳ್ಳಬೇಕು</div>
+          <div>{kannada.how_to_take}</div>
+          {kannada.warning && <div className="lang-warn">⚠️ {kannada.warning}</div>}
+        </div>
+      )}
+      {(lang === "hi" && !hindi) && <div className="lang-box" style={{color:"#898897"}}>Hindi translation not available for this medicine.</div>}
+      {(lang === "kn" && !kannada) && <div className="lang-box" style={{color:"#898897"}}>Kannada translation not available for this medicine.</div>}
+
+      {/* Read aloud button */}
+      <button className="secondary" style={{marginTop:10,width:"100%"}} onClick={handleVoice}>
+        🎙️ Read aloud in {langLabel[lang]}
+      </button>
+    </div>
+  );
+}
+
 export default function App() {
   const [tab, setTab] = useState("scan");
   const [medicineName, setMedicineName] = useState("Warfarin");
@@ -42,6 +115,8 @@ export default function App() {
   const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem("sahidawa_logs") || "[]"));
   const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem("sahidawa_history") || "[]"));
   const [serverHealth, setServerHealth] = useState(null);
+  // ── NEW: unread badge counter for Audit tab ───────────────────────────────
+  const [unreadLogs, setUnreadLogs] = useState(0);
   const fileRef = useRef(null);
 
   const highRisk = result && (result.requires_permission || result.safety_score < 50 || result.emergency);
@@ -58,8 +133,15 @@ export default function App() {
     fetch(`${API_BASE}/health`).then((r) => r.json()).then(setServerHealth).catch(() => setServerHealth(null));
   }, []);
 
+  // ── Clear badge when Audit tab is opened ─────────────────────────────────
+  useEffect(() => {
+    if (tab === "audit") setUnreadLogs(0);
+  }, [tab]);
+
   function addLog(type, action, detail, hash) {
     setLogs((prev) => [...prev, { type, action, detail, hash, time: now() }]);
+    // ── Increment badge only when NOT on Audit tab ────────────────────────
+    setUnreadLogs((prev) => (tab === "audit" ? 0 : prev + 1));
   }
 
   function remember(data) {
@@ -138,12 +220,18 @@ export default function App() {
     }
   }
 
+  // ── Permission gate handlers with log entries ─────────────────────────────
+  const [gateState, setGateState] = useState("pending"); // pending | approved | denied
+  useEffect(() => { setGateState("pending"); }, [result]);
+
   function approveCaregiver() {
-    addLog("approve", "Caregiver alert approved", `User authorized escalation for ${result.medicine_name}`, result.agent_trace?.audit_hash);
+    setGateState("approved");
+    addLog("approve", "Caregiver alert APPROVED", `User authorized agent to alert caregiver for ${result?.medicine_name}`, result?.agent_trace?.audit_hash);
   }
 
   function denyCaregiver() {
-    addLog("block", "Caregiver alert denied", `Agent action blocked for ${result.medicine_name}`, result.agent_trace?.audit_hash);
+    setGateState("denied");
+    addLog("block", "Caregiver alert DENIED", `Agent action blocked for ${result?.medicine_name}`, result?.agent_trace?.audit_hash);
   }
 
   function onFileChange(nextFile) {
@@ -153,18 +241,18 @@ export default function App() {
   }
 
   const nav = [
-    ["scan", "Scan"],
-    ["type", "Type"],
-    ["interactions", "Interactions"],
-    ["memory", "Memory"],
-    ["audit", "Audit"],
+    ["scan",         "📷 Scan"],
+    ["type",         "✏️  Type"],
+    ["interactions", "⚠️  Interactions"],
+    ["memory",       "🕘 Memory"],
+    ["audit",        "🛡️  Audit Log"],
   ];
 
   const sourceLabel = useMemo(() => {
     if (!serverHealth) return "Backend not connected";
     const models = [];
     if (serverHealth.gemini_configured) models.push("Gemini Vision");
-    if (serverHealth.groq_configured) models.push("Groq");
+    if (serverHealth.groq_configured)   models.push("NVIDIA / Groq");
     models.push("offline safety pack");
     return models.join(" + ");
   }, [serverHealth]);
@@ -186,7 +274,15 @@ export default function App() {
             <p>A medication-safety agent for Indian families with scoped actions, persistent memory, fallback reasoning, caregiver approval, and tamper-evident audit logs.</p>
           </div>
           <nav className="nav">
-            {nav.map(([id, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}>{label}</button>)}
+            {nav.map(([id, label]) => (
+              <button key={id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}>
+                <span>{label}</span>
+                {/* ── NEW: red badge on Audit tab ─────────────────────── */}
+                {id === "audit" && unreadLogs > 0 && (
+                  <span className="notif-dot">{unreadLogs}</span>
+                )}
+              </button>
+            ))}
           </nav>
           <div className="status">
             <div><strong>Runtime:</strong> {sourceLabel}</div>
@@ -203,7 +299,9 @@ export default function App() {
             </div>
           </div>
 
-          {!serverHealth && <div className="banner">Backend is not connected yet. Start FastAPI on port 8001 for the live demo.</div>}
+          {!serverHealth && (
+            <div className="banner">⚠️ Backend not connected. Start FastAPI: <code>python main.py</code> on port 8000.</div>
+          )}
 
           {tab === "scan" && (
             <div className="grid">
@@ -228,7 +326,7 @@ export default function App() {
                 </div>
                 <button className="primary" disabled={!file || loading} onClick={analyzeImage}>{loading ? "Analyzing..." : "Analyze image"}</button>
               </section>
-              <ResultPanel result={result} highRisk={highRisk} approveCaregiver={approveCaregiver} denyCaregiver={denyCaregiver} addLog={addLog} />
+              <ResultPanel result={result} highRisk={highRisk} gateState={gateState} approveCaregiver={approveCaregiver} denyCaregiver={denyCaregiver} addLog={addLog} />
             </div>
           )}
 
@@ -246,11 +344,11 @@ export default function App() {
                 </div>
                 <div className="actions">
                   <button className="primary" disabled={loading || !medicineName.trim()} onClick={analyzeText}>{loading ? "Checking..." : "Run guardian check"}</button>
-                  <button className="secondary" onClick={() => { setMedicineName("Metformin 500 mg"); setOtherMeds(""); }}>Safe demo</button>
-                  <button className="danger" onClick={() => { setMedicineName("Warfarin"); setOtherMeds("Aspirin"); }}>Risk demo</button>
+                  <button className="secondary" onClick={() => { setMedicineName("Metformin 500 mg"); setOtherMeds(""); setResult(null); }}>Safe demo</button>
+                  <button className="danger" onClick={() => { setMedicineName("Warfarin"); setOtherMeds("Aspirin"); setResult(null); }}>Risk demo</button>
                 </div>
               </section>
-              <ResultPanel result={result} highRisk={highRisk} approveCaregiver={approveCaregiver} denyCaregiver={denyCaregiver} addLog={addLog} />
+              <ResultPanel result={result} highRisk={highRisk} gateState={gateState} approveCaregiver={approveCaregiver} denyCaregiver={denyCaregiver} addLog={addLog} />
             </div>
           )}
 
@@ -262,35 +360,45 @@ export default function App() {
                   <label>Add medicine</label>
                   <div className="actions">
                     <input value={newMed} onChange={(e) => setNewMed(e.target.value)} onKeyDown={(e) => {
-                      if (e.key === "Enter" && newMed.trim()) {
-                        setInteractionMeds((prev) => [...prev, newMed.trim()]);
-                        setNewMed("");
-                      }
+                      if (e.key === "Enter" && newMed.trim()) { setInteractionMeds((prev) => [...prev, newMed.trim()]); setNewMed(""); }
                     }} placeholder="Ibuprofen, alcohol, aspirin" />
                     <button className="secondary" onClick={() => { if (newMed.trim()) { setInteractionMeds((prev) => [...prev, newMed.trim()]); setNewMed(""); } }}>Add</button>
                   </div>
                 </div>
                 <div className="actions">
-                  {interactionMeds.map((med) => <button key={med} className="secondary" onClick={() => setInteractionMeds((prev) => prev.filter((m) => m !== med))}>{med} x</button>)}
+                  {interactionMeds.map((med) => (
+                    <button key={med} className="secondary" onClick={() => setInteractionMeds((prev) => prev.filter((m) => m !== med))}>{med} ×</button>
+                  ))}
                 </div>
                 <div className="actions" style={{ marginTop: 14 }}>
                   <button className="primary" disabled={loading || interactionMeds.length < 2} onClick={checkInteractions}>{loading ? "Checking..." : "Check interactions"}</button>
-                  <button className="danger" onClick={() => setInteractionMeds(["Warfarin", "Aspirin"])}>Load winning demo</button>
+                  <button className="danger" onClick={() => { setInteractionMeds(["Warfarin", "Aspirin"]); setInteractionResult(null); }}>Load winning demo</button>
                 </div>
               </section>
               <section className="panel">
                 <h3>Interaction Result</h3>
-                {!interactionResult ? <div className="empty">Run the checker to see risk scoring and approval triggers.</div> : (
+                {!interactionResult ? (
+                  <div className="empty">Run the checker to see risk scoring and approval triggers.</div>
+                ) : (
                   <div className="result">
-                    <span className={`badge ${interactionResult.requires_caregiver_alert ? "high" : "ok"}`}>{interactionResult.requires_caregiver_alert ? "Caregiver approval required" : "No escalation required"}</span>
-                    {interactionResult.pairs?.length ? interactionResult.pairs.map((pair, index) => (
-                      <div className="warning" key={`${pair.drug1}-${pair.drug2}-${index}`}>
-                        <strong>{pair.severity}: {pair.drug1} + {pair.drug2}</strong>
-                        <div>{pair.effect}</div>
-                        <div>{pair.advice}</div>
-                      </div>
-                    )) : <p>No dangerous interaction found in the safety pack.</p>}
+                    <span className={`badge ${interactionResult.requires_caregiver_alert ? "high" : "ok"}`}>
+                      {interactionResult.requires_caregiver_alert ? "Caregiver approval required" : "No escalation required"}
+                    </span>
+                    {interactionResult.pairs?.length
+                      ? interactionResult.pairs.map((pair, index) => (
+                        <div className="warning" key={`${pair.drug1}-${pair.drug2}-${index}`}>
+                          <strong>{pair.severity}: {pair.drug1} + {pair.drug2}</strong>
+                          <div>{pair.effect}</div>
+                          <div style={{marginTop:6,fontStyle:"italic"}}>{pair.advice}</div>
+                        </div>
+                      ))
+                      : <p>No dangerous interaction found.</p>
+                    }
                     <p>{interactionResult.overall_advice}</p>
+                    {/* ── NEW: Hindi summary shown below overall advice ─ */}
+                    {interactionResult.hindi_summary && (
+                      <div className="lang-box" style={{fontSize:13,color:"#c8c4b8"}}>{interactionResult.hindi_summary}</div>
+                    )}
                     <Trace trace={interactionResult.agent_trace} />
                   </div>
                 )}
@@ -301,7 +409,9 @@ export default function App() {
           {tab === "memory" && (
             <section className="panel">
               <h3>Persistent Medicine Memory</h3>
-              {history.length === 0 ? <div className="empty">No medicines checked yet.</div> : (
+              {history.length === 0 ? (
+                <div className="empty">No medicines checked yet. Guardian remembers everything you scan.</div>
+              ) : (
                 <div className="log">
                   {history.map((item) => (
                     <div className="log-row" key={`${item.name}-${item.time}`}>
@@ -321,19 +431,24 @@ export default function App() {
           {tab === "audit" && (
             <section className="panel">
               <h3>Agent Audit Trail</h3>
-              {logs.length === 0 ? <div className="empty">No agent actions yet.</div> : (
-                <div className="log">
-                  {[...logs].reverse().map((log, index) => (
-                    <div className="log-row" key={`${log.time}-${index}`}>
-                      <div className="log-time">{log.time}</div>
-                      <div>
-                        <div className="log-action">{log.action}</div>
-                        <div className="log-detail">{log.detail}</div>
+              {logs.length === 0 ? (
+                <div className="empty">No agent actions yet. Scan a medicine to start the trail.</div>
+              ) : (
+                <>
+                  <div style={{fontSize:12,color:"#898897",marginBottom:12}}>{logs.length} agent actions recorded this session</div>
+                  <div className="log">
+                    {[...logs].reverse().map((log, index) => (
+                      <div className="log-row" key={`${log.time}-${index}`}>
+                        <div className="log-time">{log.time}</div>
+                        <div>
+                          <div className="log-action">{log.action}</div>
+                          <div className="log-detail">{log.detail}</div>
+                        </div>
+                        <div className="hash">{shortHash(log.hash)}</div>
                       </div>
-                      <div className="hash">{shortHash(log.hash)}</div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </>
               )}
             </section>
           )}
@@ -345,7 +460,7 @@ export default function App() {
   );
 }
 
-function ResultPanel({ result, highRisk, approveCaregiver, denyCaregiver, addLog }) {
+function ResultPanel({ result, highRisk, gateState, approveCaregiver, denyCaregiver, addLog }) {
   if (!result) {
     return (
       <section className="panel">
@@ -354,9 +469,6 @@ function ResultPanel({ result, highRisk, approveCaregiver, denyCaregiver, addLog
       </section>
     );
   }
-
-  const hindi = result.translations?.hindi;
-  const kannada = result.translations?.kannada;
 
   return (
     <section className="panel result">
@@ -367,37 +479,56 @@ function ResultPanel({ result, highRisk, approveCaregiver, denyCaregiver, addLog
         </div>
         <span className={`badge ${highRisk ? "high" : "ok"}`}>{highRisk ? "Approval required" : "Low risk"}</span>
       </div>
-      <div className="score"><span style={{ width: `${result.safety_score}%`, background: scoreColor(result.safety_score) }} /></div>
-      <p><strong>Used for:</strong> {result.used_for}</p>
-      <p><strong>How to take:</strong> {result.how_to_take}</p>
-      {!!result.avoid?.length && <div><strong>Avoid</strong><ul className="list">{result.avoid.map((item) => <li key={item}>{item}</li>)}</ul></div>}
-      {!!result.side_effects?.length && <div><strong>Side effects</strong><ul className="list">{result.side_effects.map((item) => <li key={item}>{item}</li>)}</ul></div>}
-      {result.warning && <div className="warning">{result.warning}</div>}
-      {result.interaction_alert && <div className="warning">{result.interaction_alert}</div>}
-      <div className="actions">
-        <button className="secondary" onClick={() => {
-          speak(`${result.medicine_name}. ${result.used_for}. ${result.how_to_take}. ${result.warning || ""}`);
-          addLog("approve", "Voice readout", result.medicine_name, result.agent_trace?.audit_hash);
-        }}>Read aloud</button>
+
+      {/* Safety score bar */}
+      <div className="score">
+        <span style={{ width: `${result.safety_score}%`, background: scoreColor(result.safety_score) }} />
       </div>
-      {(hindi || kannada) && (
-        <div className="language">
-          {hindi && <div className="translation"><strong>Hindi</strong><br />{hindi.used_for}<br />{hindi.how_to_take}<br />{hindi.warning}</div>}
-          {kannada && <div className="translation"><strong>Kannada</strong><br />{kannada.used_for}<br />{kannada.how_to_take}<br />{kannada.warning}</div>}
+      <div style={{fontSize:12,color:scoreColor(result.safety_score),fontWeight:700,marginTop:4}}>{result.safety_score}/100 safety score</div>
+
+      {/* ── NEW: Language Toggle with EN/HI/KN tabs ──────────────────────── */}
+      <LangToggle result={result} addLog={addLog} />
+
+      {/* Avoid + Side effects */}
+      {!!result.avoid?.length && (
+        <div>
+          <strong style={{fontSize:12,color:"#ff9b56",letterSpacing:".05em",textTransform:"uppercase"}}>⚠️ Avoid</strong>
+          <ul className="list">{result.avoid.map((item) => <li key={item}>{item}</li>)}</ul>
         </div>
       )}
-      {highRisk && (
+      {!!result.side_effects?.length && (
+        <div>
+          <strong style={{fontSize:12,color:"#ff9b56",letterSpacing:".05em",textTransform:"uppercase"}}>Side effects</strong>
+          <ul className="list">{result.side_effects.map((item) => <li key={item}>{item}</li>)}</ul>
+        </div>
+      )}
+
+      {result.interaction_alert && <div className="warning">{result.interaction_alert}</div>}
+
+      {/* ── Permission gate with approve/deny/approved/denied states ──────── */}
+      {highRisk && gateState === "pending" && (
         <div className="permission">
-          <h3>Scoped action gate</h3>
+          <h3>🔐 Scoped action gate</h3>
           <p>The agent wants to notify a caregiver or pharmacist. It cannot act until the user approves.</p>
           <div className="actions">
-            <button className="primary" onClick={approveCaregiver}>Approve caregiver alert</button>
-            <button className="danger" onClick={denyCaregiver}>Deny action</button>
+            <button className="primary" onClick={approveCaregiver}>✅ Approve caregiver alert</button>
+            <button className="danger" onClick={denyCaregiver}>✗ Deny action</button>
           </div>
         </div>
       )}
+      {highRisk && gateState === "approved" && (
+        <div className="approved-gate">✅ Agent action approved — Caregiver alert logged and queued</div>
+      )}
+      {highRisk && gateState === "denied" && (
+        <div style={{border:"1px solid rgba(255,255,255,.08)",borderRadius:8,padding:12,color:"#898897",fontSize:13}}>
+          ✗ Action denied. Guardian will not escalate without your permission.
+        </div>
+      )}
+
       <Trace trace={result.agent_trace} />
-      {result.fallback_reason && <div className="banner">Model fallback used. The local safety pack kept the demo running.</div>}
+      {result.fallback_reason && (
+        <div className="banner">Model fallback used. The local safety pack kept the demo running.</div>
+      )}
     </section>
   );
 }
